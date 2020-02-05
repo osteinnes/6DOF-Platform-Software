@@ -1,6 +1,11 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
+from webcam import webcam
+
+import tkinter.ttk as ttk
+
+
 class gui(object):
     # Root gui window
     root = None
@@ -14,8 +19,11 @@ class gui(object):
     btn_circle = None
     btn_fig8 = None
 
-    # Video source
-    vid = None
+    # Camera
+    cam = None
+
+    # Image holder
+    label = None
 
     # Setup gui
     def __init__(self):
@@ -24,8 +32,10 @@ class gui(object):
         self.pack_dividers()
         self.create_btns()
         self.pack_btns()
+        self.cam = webcam.webcam()
         self.set_image('640x360.png')
-        self.restrict_size()
+        #self.restrict_size()
+        self.update()
 
     # Start gui
     def start(self):
@@ -65,12 +75,23 @@ class gui(object):
 
     # Set placeholder image
     def set_image(self, img_path):
-        img = ImageTk.PhotoImage(Image.open(img_path))
-        label = Label(self.frame_left, image = img)
-        label.image = img
-        label.pack(fill = "both", expand = "yes")
+        img = self.cam.get_img()
+        img = ImageTk.PhotoImage(image = Image.fromarray(img))
+        self.label = Label(self.frame_left, image = img)
+        self.label.image = img
+        self.label.pack(fill = "both", expand = "yes")
+
+    def update(self):
+        img = self.cam.get_img()
+        img = ImageTk.PhotoImage(image = Image.fromarray(img))
+        self.label.configure(image=img)
+        self.label.image = img
+        self.root.after(10, self.update)
 
 
 if __name__ == "__main__":
+    import os
+    path = 'C:/Users/eirik/OneDrive/school/Simulation and Visualization/2.semester/simulation_of_closed_loop_systems/platform/6DOF-Platform-Software/src/webcam'
+    os.chdir(path)
     gui = gui()
     gui.start()
