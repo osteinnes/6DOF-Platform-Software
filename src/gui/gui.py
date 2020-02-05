@@ -3,7 +3,6 @@ from PIL import Image, ImageTk
 import os
 
 root = Tk()
-root.minsize(600, 400)
 
 root.title("6DOF-Platform")
 
@@ -13,7 +12,7 @@ frame_bot = Frame(root, pady=5, padx=5, highlightbackground="black", highlightth
 
 # Pack main deviders
 frame_top.pack(side=TOP, pady=5, padx=5)
-frame_bot.pack(side=BOTTOM, pady=5, padx=5)
+frame_bot.pack(side=BOTTOM, padx=5)
 
 # Create buttons
 btn_center = Button(frame_top, text="Center")
@@ -32,6 +31,10 @@ img = Image.open('h.jpg')
 img = ImageTk.PhotoImage(img)
 can = Label(root, image = img)
 can.pack(side = "bottom", fill = "both", expand = "yes")
+
+
+root.update()
+root.minsize(root.winfo_width(), root.winfo_height())
 
 
 root.mainloop()
