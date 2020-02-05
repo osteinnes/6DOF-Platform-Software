@@ -1,41 +1,72 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import os
 
-root = Tk()
+class gui(object):
+    # Root gui window
+    root = None
 
-root.title("6DOF-Platform")
+    # Variables for the dividers
+    frame_top = None
+    frame_bot = None
 
-# Create main deviders
-frame_top = Frame(root, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
-frame_bot = Frame(root, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+    # Variables for the buttons
+    btn_center = None
+    btn_circle = None
+    btn_fig8 = None
 
-# Pack main deviders
-frame_top.pack(side=TOP, pady=5, padx=5)
-frame_bot.pack(side=BOTTOM, padx=5)
+    # Setup gui
+    def __init__(self):
+        self.root = Tk()
+        self.create_dividers()
+        self.pack_dividers()
+        self.create_btns()
+        self.pack_btns()
+        self.set_image()
+        self.restrict_size()
 
-# Create buttons
-btn_center = Button(frame_top, text="Center")
-btn_circle = Button(frame_top, text="Circle")
-btn_fig8 = Button(frame_top, text="Figure 8")
+    # Start gui
+    def start(self):
+        self.root.mainloop()
 
-# Pack buttons
-btn_center.grid(row=0, column=0, pady=5, padx=5)
-btn_circle.grid(row=0, column=1, pady=5, padx=5)
-btn_fig8.grid(row=0, column=2, pady=5, padx=5)
+    # Set window title
+    def set_title(self, title="6DOF-Platform"):
+        self.root.title(title)
 
-print(os.getcwd())
+    # Main dividers devide the gui in several parts
+    def create_dividers(self):
+        self.frame_top = Frame(self.root, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_bot = Frame(self.root, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        
+    # Pack dividers
+    def pack_dividers(self):
+        self.frame_top.pack(side=RIGHT, pady=5, padx=5, fill = X)
+        self.frame_bot.pack(side=LEFT, pady=5, padx=5)
 
-# Add image
-img = Image.open('h.jpg')
-img = ImageTk.PhotoImage(img)
-can = Label(root, image = img)
-can.pack(side = "bottom", fill = "both", expand = "yes")
+    # Create buttons
+    def create_btns(self):
+        self.btn_center = Button(self.frame_top, text="Center")
+        self.btn_circle = Button(self.frame_top, text="Circle")
+        self.btn_fig8 = Button(self.frame_top, text="Figure 8")
 
+    # Pack buttons
+    def pack_btns(self):
+        self.btn_center.grid(row=0, column=0, pady=5, padx=5)
+        self.btn_circle.grid(row=1, column=0, pady=5, padx=5)
+        self.btn_fig8.grid(row=2, column=0, pady=5, padx=5)
 
-root.update()
-root.minsize(root.winfo_width(), root.winfo_height())
+    # Restrict minimum size
+    def restrict_size(self):
+        self.root.update()
+        self.root.minsize(self.root.winfo_width(), self.root.winfo_height())
+        self.root.maxsize(self.root.winfo_width(), self.root.winfo_height())
 
+    # Add placeholder image
+    def set_image(self):
+        img = Image.open('h.jpg')
+        img = ImageTk.PhotoImage(img)
+        can = Label(self.frame_bot, image = img)
+        can.pack(side = "bottom", fill = "both", expand = "yes")
 
-root.mainloop()
-
+if __name__ == "__main__":
+    gui = gui()
+    gui.start()
