@@ -82,7 +82,7 @@ class gui(object):
         self.label.pack(fill = "both", expand = "yes")
 
     def update(self):
-        img = self.cam.get_img()
+        img = self.cam.get_masked_img()
         img = ImageTk.PhotoImage(image = Image.fromarray(img))
         self.label.configure(image=img)
         self.label.image = img
