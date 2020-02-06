@@ -30,22 +30,15 @@ class webcam(object):
 
     # Returns a binary image 
     def get_masked_img(self):
-        img = self.get_img()
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        image = self.get_img()
+        result = image.copy()
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        lower = np.array([155,25,0])
+        upper = np.array([179,255,255])
+        mask = cv2.inRange(image, lower, upper)
+        return cv2.bitwise_and(result, result, mask=mask)
+        
 
-        # Lower range
-        l = np.array([0, 120, 70])
-        u = np.array([10, 255, 255])
-        mask_l = cv2.inRange(img, l, u)
-
-        # Upper range
-        l = np.array([170, 120, 70])
-        u = np.array([180, 255, 255])
-        mask_u = cv2.inRange(img, l, u)
-
-        mask = mask_l + mask_u
-
-        return cv2.bitwise_and(img, img, mask=mask)
 
 if __name__ == "__main__":
     cam = webcam()

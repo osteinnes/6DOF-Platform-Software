@@ -81,12 +81,13 @@ class gui(object):
         self.label.image = img
         self.label.pack(fill = "both", expand = "yes")
 
+    # Callback function to get and update image
     def update(self):
         img = self.cam.get_masked_img()
         img = ImageTk.PhotoImage(image = Image.fromarray(img))
         self.label.configure(image=img)
         self.label.image = img
-        self.root.after(10, self.update)
+        self.root.after(1, self.update)
 
 
 if __name__ == "__main__":
