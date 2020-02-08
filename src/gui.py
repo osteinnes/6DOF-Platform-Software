@@ -67,12 +67,12 @@ class gui(object):
 
     # Create buttons
     def create_btns(self):
-        self.btn_center = Button(self.frame_right_bot, text="Center")
-        self.btn_circle = Button(self.frame_right_bot, text="Circle")
-        self.btn_fig8 = Button(self.frame_right_bot, text="Figure 8")
+        self.btn_center = Button(self.frame_right_bot, text="Center", command=self.set_mode_center)
+        self.btn_circle = Button(self.frame_right_bot, text="Circle", command=self.set_mode_circle)
+        self.btn_fig8 = Button(self.frame_right_bot, text="Figure 8", command=self.set_mode_figure8)
 
-        self.btn_normal = Button(self.frame_right_top, text="Normal", command=self.set_img_mode)
-        self.btn_masked = Button(self.frame_right_top, text="Masked", command=self.set_img_mode)
+        self.btn_normal = Button(self.frame_right_top, text="Normal", command=self.set_img_mode_normal)
+        self.btn_masked = Button(self.frame_right_top, text="Masked", command=self.set_img_mode_masked)
 
     # Pack buttons
     def pack_btns(self):
@@ -106,11 +106,18 @@ class gui(object):
         self.root.after(1, self.update)
 
     # Switches the image mode between masked and normal
-    def set_img_mode(self):
-        if self.get_img == self.cam.get_img:
-            self.get_img = self.cam.get_masked_img
-        else:
-            self.get_img = self.cam.get_img
+    def set_img_mode_normal(self):
+        self.get_img = self.cam.get_img
+    def set_img_mode_masked(self):
+        self.get_img = self.cam.get_masked_img
+
+    # Set different modes
+    def set_mode_center(self):
+        print("mode: center")
+    def set_mode_circle(self):
+        print("mode: circle")
+    def set_mode_figure8(self):
+        print("mode: figure 8")
 
 
 
