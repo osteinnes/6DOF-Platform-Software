@@ -36,13 +36,15 @@ class webcam(object):
         img = self.get_img(rgb=False)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        # H = (0 - 10), s = (20 - 255), v = (50 - 255)
-        mask1 = cv2.inRange(hsv, (0, 150, 50), (10, 255, 255))
+        # Red color spectrum
+        lower = cv2.inRange(hsv, (0, 150, 50), (10, 255, 255))
+        upper = cv2.inRange(hsv, (170, 150, 50), (180, 255, 255))
+        red = lower + upper
 
-        # H = (170 - 180), s = (200 - 255), v = (50 - 255)
-        mask2 = cv2.inRange(hsv, (170, 150, 50), (180, 255, 255))
+        # Blue color
+        blue = cv2.inRange(hsv, (100, 150, 50), (135, 255, 255))
 
-        mask = mask1 + mask2
+        mask = red + blue
 
         img = cv2.bitwise_and(img, img, mask=mask)
 
