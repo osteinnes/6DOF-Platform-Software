@@ -28,22 +28,19 @@ class gui(object):
     # Setup gui
     def __init__(self):
         self.root = Tk()
+        self.root.title("6DOF-Platform")
         self.create_dividers()
         self.pack_dividers()
         self.create_btns()
         self.pack_btns()
         self.cam = webcam.webcam()
         self.set_image('640x360.png')
-        #self.restrict_size()
+        self.restrict_size()
         self.update()
 
     # Start gui
     def start(self):
         self.root.mainloop()
-
-    # Set window title
-    def set_title(self, title="6DOF-Platform"):
-        self.root.title(title)
 
     # Main dividers divide the gui in several parts
     def create_dividers(self):
@@ -75,7 +72,7 @@ class gui(object):
 
     # Set placeholder image
     def set_image(self, img_path):
-        img = self.cam.get_img()
+        img = self.cam.get_masked_img()
         img = ImageTk.PhotoImage(image = Image.fromarray(img))
         self.label = Label(self.frame_left, image = img)
         self.label.image = img
