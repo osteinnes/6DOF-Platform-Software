@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 # Class for taking and storing picuters
 class webcam(object):
@@ -10,7 +11,7 @@ class webcam(object):
         self.set_cam()
 
     # Set camera to the objects camera variable
-    def set_cam(self, source=1):
+    def set_cam(self, source=1S):
         self.cam = cv2.VideoCapture(source)
 
     # Release camera and 
@@ -49,6 +50,10 @@ class webcam(object):
         img = cv2.bitwise_and(img, img, mask=mask)
 
         return cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    def snapshot(self, name = "Snapshot"):
+        img = self.get_img(rgb=False)
+        cv2.imwrite(filename=name + ".jpg", img=img)
         
 
 

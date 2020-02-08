@@ -3,7 +3,6 @@ from PIL import Image, ImageTk
 
 from webcam import webcam
 
-import tkinter.ttk as ttk
 
 
 class gui(object):
@@ -20,8 +19,10 @@ class gui(object):
     btn_center = None
     btn_circle = None
     btn_fig8 = None
+
     btn_normal = None
     btn_masked = None
+    btn_snapshot = None
 
     # Camera
     cam = None
@@ -43,7 +44,7 @@ class gui(object):
         self.pack_dividers()
         self.create_btns()
         self.pack_btns()
-        self.set_image('640x360.png')
+        self.set_image()
         self.restrict_size()
         self.update()
 
@@ -73,6 +74,7 @@ class gui(object):
 
         self.btn_normal = Button(self.frame_right_top, text="Normal", command=self.set_img_mode_normal)
         self.btn_masked = Button(self.frame_right_top, text="Masked", command=self.set_img_mode_masked)
+        self.btn_snapshot = Button(self.frame_right_top, text="Snapshot", command=self.cam.snapshot)
 
     # Pack buttons
     def pack_btns(self):
@@ -80,8 +82,9 @@ class gui(object):
         self.btn_circle.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_fig8.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
 
+        self.btn_snapshot.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_masked.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
-        self.btn_normal.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
+        self.btn_normal.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
 
     # Restrict minimum size
     def restrict_size(self):
@@ -90,7 +93,7 @@ class gui(object):
         self.root.maxsize(self.root.winfo_width(), self.root.winfo_height())
 
     # Set placeholder image
-    def set_image(self, img_path):
+    def set_image(self):
         img = self.cam.get_masked_img()
         img = ImageTk.PhotoImage(image = Image.fromarray(img))
         self.label = Label(self.frame_left, image = img)
@@ -103,7 +106,7 @@ class gui(object):
         img = ImageTk.PhotoImage(image = Image.fromarray(img))
         self.label.configure(image=img)
         self.label.image = img
-        self.root.after(1, self.update)
+        self.root.after(50, self.update)
 
     # Switches the image mode between masked and normal
     def set_img_mode_normal(self):
