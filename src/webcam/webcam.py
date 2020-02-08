@@ -20,7 +20,7 @@ class webcam(object):
 
     # Returns an image, if an exception is 
     # raised return None
-    def get_img(self, rgb=False):
+    def get_img(self, rgb=True):
         img = None
         try:
             check, img = self.cam.read()
@@ -33,7 +33,7 @@ class webcam(object):
 
     # Returns a binary image 
     def get_masked_img(self):
-        img = self.get_img()
+        img = self.get_img(rgb=False)
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # H = (0 - 10), s = (20 - 255), v = (50 - 255)
