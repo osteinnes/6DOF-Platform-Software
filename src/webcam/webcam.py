@@ -11,7 +11,7 @@ class webcam(object):
         self.set_cam()
 
     # Set camera to the objects camera variable
-    def set_cam(self, source=1S):
+    def set_cam(self, source=1):
         self.cam = cv2.VideoCapture(source)
 
     # Release camera and 
