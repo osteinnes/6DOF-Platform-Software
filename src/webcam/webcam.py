@@ -11,7 +11,7 @@ class webcam(object):
         self.set_cam()
 
     # Set camera to the objects camera variable
-    def set_cam(self, source=1):
+    def set_cam(self, source=2):
         self.cam = cv2.VideoCapture(source)
 
     # Release camera and 
@@ -38,8 +38,8 @@ class webcam(object):
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # Red color spectrum
-        lower = cv2.inRange(hsv, (0, 150, 50), (10, 255, 255))
-        upper = cv2.inRange(hsv, (170, 150, 50), (180, 255, 255))
+        lower = cv2.inRange(hsv, (0, 75, 50), (15, 255, 255))
+        upper = cv2.inRange(hsv, (165, 75, 50), (180, 255, 255))
         red = lower + upper
 
         # Blue color

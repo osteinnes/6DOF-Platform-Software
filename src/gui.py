@@ -1,8 +1,9 @@
 from tkinter import *
 from PIL import Image, ImageTk
+import imutils
+import cv2
 
-from webcam import webcam
-
+from webcam import webcam, ball_tracking
 
 
 class gui(object):
@@ -39,7 +40,7 @@ class gui(object):
         self.get_img = self.cam.get_img
 
         self.root = Tk()
-        self.root.title("6DOF-Platform")
+        self.root.title("6DOF-Platform 3000")
         self.create_dividers()
         self.pack_dividers()
         self.create_btns()
@@ -54,11 +55,14 @@ class gui(object):
 
     # Main dividers divide the gui in several parts
     def create_dividers(self):
-        self.frame_left = Frame(self.root, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_left = Frame(self.root, pady=5, padx=5,
+                                highlightbackground="black", highlightthickness=1)
         self.frame_right = Frame(self.root)
-        self.frame_right_top = Frame(self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
-        self.frame_right_bot = Frame(self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
-        
+        self.frame_right_top = Frame(
+            self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_right_bot = Frame(
+            self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+
     # Pack dividers
     def pack_dividers(self):
         self.frame_right.pack(side=RIGHT, pady=5, padx=5)
@@ -68,13 +72,19 @@ class gui(object):
 
     # Create buttons
     def create_btns(self):
-        self.btn_center = Button(self.frame_right_bot, text="Center", command=self.set_mode_center)
-        self.btn_circle = Button(self.frame_right_bot, text="Circle", command=self.set_mode_circle)
-        self.btn_fig8 = Button(self.frame_right_bot, text="Figure 8", command=self.set_mode_figure8)
+        self.btn_center = Button(self.frame_right_bot,
+                                 text="Center", command=self.set_mode_center)
+        self.btn_circle = Button(self.frame_right_bot,
+                                 text="Circle", command=self.set_mode_circle)
+        self.btn_fig8 = Button(self.frame_right_bot,
+                               text="Figure 8", command=self.set_mode_figure8)
 
-        self.btn_normal = Button(self.frame_right_top, text="Normal", command=self.set_img_mode_normal)
-        self.btn_masked = Button(self.frame_right_top, text="Masked", command=self.set_img_mode_masked)
-        self.btn_snapshot = Button(self.frame_right_top, text="Snapshot", command=self.cam.snapshot)
+        self.btn_normal = Button(
+            self.frame_right_top, text="Normal", command=self.set_img_mode_normal)
+        self.btn_masked = Button(
+            self.frame_right_top, text="Masked", command=self.set_img_mode_masked)
+        self.btn_snapshot = Button(
+            self.frame_right_top, text="Snapshot", command=self.cam.snapshot)
 
     # Pack buttons
     def pack_btns(self):
@@ -95,15 +105,21 @@ class gui(object):
     # Set placeholder image
     def set_image(self):
         img = self.cam.get_masked_img()
-        img = ImageTk.PhotoImage(image = Image.fromarray(img))
-        self.label = Label(self.frame_left, image = img)
+        img = ImageTk.PhotoImage(image=Image.fromarray(img))
+        self.label = Label(self.frame_left, image=img)
         self.label.image = img
-        self.label.pack(fill = "both", expand = "yes")
+        self.label.pack(fill="both", expand="yes")
 
     # Callback function to get and update image
     def update(self):
-        img = self.get_img()
-        img = ImageTk.PhotoImage(image = Image.fromarray(img))
+        frame = self.get_img()
+        #img = frame.copy()
+
+        img = None
+
+        img = ball_tracking.getHoughCircle(frame)
+
+        img = ImageTk.PhotoImage(image=Image.fromarray(img))
         self.label.configure(image=img)
         self.label.image = img
         self.root.after(50, self.update)
@@ -111,23 +127,24 @@ class gui(object):
     # Switches the image mode between masked and normal
     def set_img_mode_normal(self):
         self.get_img = self.cam.get_img
+
     def set_img_mode_masked(self):
         self.get_img = self.cam.get_masked_img
 
     # Set different modes
     def set_mode_center(self):
         print("mode: center")
+
     def set_mode_circle(self):
         print("mode: circle")
+
     def set_mode_figure8(self):
         print("mode: figure 8")
 
 
-
-
 if __name__ == "__main__":
     import os
-    path = 'C:/Users/eirik/OneDrive/school/Simulation and Visualization/2.semester/simulation_of_closed_loop_systems/platform/6DOF-Platform-Software/src/webcam'
+    path = '/home/osteinnes/Documents/projects/6DOF-Platform-Software/src/webcam'
     os.chdir(path)
     gui = gui()
     gui.start()
