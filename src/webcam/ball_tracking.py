@@ -33,7 +33,24 @@ def getHoughCircle(image):
         
     return img
 
-#def getCountourCircle(image):
+def getContourCircle(img):
+
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    lower = cv2.inRange(hsv, (0, 150, 50), (10, 255, 255))
+    upper = cv2.inRange(hsv, (165, 150, 50), (180, 255, 255))
+    red = lower + upper
+
+    # Blue color
+    blue = cv2.inRange(hsv, (100, 150, 50), (135, 255, 255))
+
+    mask = red + blue
+
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
+    biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+    cv2.drawContours(img, biggest_contour, -1, (0,255,0), 3)
+    return img
 
         
 if __name__ == "__main__":

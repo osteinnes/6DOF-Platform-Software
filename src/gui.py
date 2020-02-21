@@ -117,7 +117,7 @@ class gui(object):
 
         img = None
 
-        img = ball_tracking.getHoughCircle(frame)
+        img = ball_tracking.getContourCircle(frame)
 
         img = ImageTk.PhotoImage(image=Image.fromarray(img))
         self.label.configure(image=img)
