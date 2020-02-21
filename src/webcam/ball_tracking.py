@@ -52,21 +52,33 @@ def getContourCircle(img):
 
     contours, hierarchy = cv2.findContours( mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    print(contours)
+    #print(contours)
 
     if len(contours) > 1:
         contour_sizes = [(cv2.contourArea(contour), contour)
                         for contour in contours]
-        biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
-        cv2.drawContours(img, biggest_contour, -1, (0, 255, 0), 3)
+        biggest_contours = sorted(contour_sizes, key=lambda x: x[0], reverse=True)
+        #biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+        
+        biggest_contour = biggest_contours[0][1]
+        smallest_contour = biggest_contours[2][1]
+
+        cv2.drawContours(img, smallest_contour, -1, (0, 255, 0), 3)
+        cv2.drawContours(img, biggest_contour, -1, (255, 0, 0), 3)
 
         M = cv2.moments(biggest_contour)
+        M2 = cv2.moments(smallest_contour)
 
         if M["m00"] != 0:
             cX = int(M["m10"] / M["m00"])
             cY = int(M["m01"] / M["m00"])
 
-            cv2.circle(img, (cX, cY), 7, (255, 255, 255), -1)
+            cv2.circle(img, (cX, cY), 7, (255, 0, 0), -1)
+        if M2["m00"] != 0:
+            cX = int(M2["m10"] / M2["m00"])
+            cY = int(M2["m01"] / M2["m00"])
+
+            cv2.circle(img, (cX, cY), 7, (0, 255, 0), -1)
 
     return img
 
@@ -75,3 +87,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("-i", "--image", required=True, help="Path to the image")
     args = vars(ap.parse_args())
+
+    image = getContourCircle(cv2.imread(args["image"], cv2.IMREAD_COLOR))
+
+    cv2.imshow('',image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
