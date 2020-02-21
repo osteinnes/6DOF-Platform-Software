@@ -26,35 +26,52 @@ def getHoughCircle(image):
             # draw the circle in the output image, then draw a rectangle
             # corresponding to the center of the circle
             cv2.circle(output, (x, y), r, (0, 255, 0), 4)
-            cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+            cv2.rectangle(output, (x - 5, y - 5),
+                          (x + 5, y + 5), (0, 128, 255), -1)
         # show the output image
         img = output
         cv2.imwrite("nparray.png", np.hstack([image, output]))
         cv2.imwrite("img.png", img)
-        
+
     return img
+
 
 def getContourCircle(img):
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-    lower = cv2.inRange(hsv, (0, 150, 50), (10, 255, 255))
-    upper = cv2.inRange(hsv, (165, 150, 50), (180, 255, 255))
+    # Red color spectrum
+    lower = cv2.inRange(hsv, (0, 75, 50), (15, 255, 255))
+    upper = cv2.inRange(hsv, (165, 75, 50), (180, 255, 255))
     red = lower + upper
 
     # Blue color
     blue = cv2.inRange(hsv, (100, 150, 50), (135, 255, 255))
-
     mask = red + blue
 
-    contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
-    biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
-    cv2.drawContours(img, biggest_contour, -1, (0,255,0), 3)
+    contours = []
+
+    contours, hierarchy = cv2.findContours( mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+
+    print(contours)
+
+    if len(contours) > 1:
+        contour_sizes = [(cv2.contourArea(contour), contour)
+                        for contour in contours]
+        biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+        cv2.drawContours(img, biggest_contour, -1, (0, 255, 0), 3)
+
+        M = cv2.moments(biggest_contour)
+
+        if M["m00"] != 0:
+            cX = int(M["m10"] / M["m00"])
+            cY = int(M["m01"] / M["m00"])
+
+            cv2.circle(img, (cX, cY), 7, (255, 255, 255), -1)
+
     return img
 
-        
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--image", required = True, help = "Path to the image")
+    ap.add_argument("-i", "--image", required=True, help="Path to the image")
     args = vars(ap.parse_args())
