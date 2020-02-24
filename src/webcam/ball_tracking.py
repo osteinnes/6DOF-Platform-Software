@@ -44,14 +44,11 @@ def getContourCircle(img):
     contours, hierarchy = cv2.findContours( mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
     if len(contours) > 1:
-        # Sort contours by area (decending)
-        contour_sizes = [(cv2.contourArea(contour), contour)
-                        for contour in contours]
-        biggest_contours = sorted(contour_sizes, key=lambda x: x[0], reverse=True)
+        sorted_contours = doSortContours(contours)
         
         # Retrieve relevant contours
-        biggest_contour = biggest_contours[0][1]
-        smallest_contour = biggest_contours[2][1]
+        biggest_contour = sorted_contours[0][1]
+        smallest_contour = sorted_contours[2][1]
 
         # Draw contours on image
         cv2.drawContours(img, smallest_contour, -1, (0, 255, 0), 3)
@@ -112,6 +109,17 @@ def generateMask(img):
     mask = red + blue
 
     return mask
+
+
+
+def doSortContours(contours):
+    # Sort contours by area (decending)
+    contour_sizes = [(cv2.contourArea(contour), contour)
+                    for contour in contours]
+    contours_array = sorted(contour_sizes, key=lambda x: x[0], reverse=True)
+
+    return contours_array
+
 
 
 if __name__ == "__main__":
