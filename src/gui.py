@@ -2,6 +2,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import imutils
 import cv2
+import json
 
 from webcam import webcam, ball_tracking
 
@@ -14,9 +15,13 @@ class gui(object):
     frame_left = None
     frame_right = None
     frame_right_top = None
+    frame_right_center = None
     frame_right_bot = None
 
     # Variables for the buttons
+    select_cam = None
+    variable = None
+
     btn_center = None
     btn_circle = None
     btn_fig8 = None
@@ -60,14 +65,18 @@ class gui(object):
         self.frame_right = Frame(self.root)
         self.frame_right_top = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_right_center = Frame(
+            self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
         self.frame_right_bot = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+
 
     # Pack dividers
     def pack_dividers(self):
         self.frame_right.pack(side=RIGHT, pady=5, padx=5)
         self.frame_left.pack(side=LEFT, pady=5, padx=5)
         self.frame_right_top.pack(side=TOP, pady=5, padx=5, fill=X)
+        self.frame_right_center.pack(pady=5, padx=5, fill=X)
         self.frame_right_bot.pack(side=BOTTOM, pady=5, padx=5, fill=X)
 
     # Create buttons
@@ -80,11 +89,18 @@ class gui(object):
                                text="Figure 8", command=self.set_mode_figure8)
 
         self.btn_normal = Button(
-            self.frame_right_top, text="Normal", command=self.set_img_mode_normal)
+            self.frame_right_center, text="Normal", command=self.set_img_mode_normal)
         self.btn_masked = Button(
-            self.frame_right_top, text="Masked", command=self.set_img_mode_masked)
+            self.frame_right_center, text="Masked", command=self.set_img_mode_masked)
         self.btn_snapshot = Button(
-            self.frame_right_top, text="Snapshot", command=self.cam.snapshot)
+            self.frame_right_center, text="Snapshot", command=self.cam.snapshot)
+        
+        cams = self.cam.get_cams()
+        self.variable = StringVar(self.root)
+        self.variable.set(str(cams[0]))
+        self.set_cam(cams[0])
+        self.select_cam = OptionMenu(
+            self.frame_right_top, self.variable, *[str(cam) for cam in cams], command=self.set_cam)
 
     # Pack buttons
     def pack_btns(self):
@@ -95,6 +111,12 @@ class gui(object):
         self.btn_snapshot.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_masked.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_normal.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
+
+        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
+
+    def set_cam(self, n):
+        cam_index = int(n)
+        self.cam.set_cam(cam_index)
 
     # Restrict minimum size
     def restrict_size(self):
@@ -143,8 +165,5 @@ class gui(object):
 
 
 if __name__ == "__main__":
-    import os
-    path = '/home/osteinnes/Documents/projects/6DOF-Platform-Software/src/webcam'
-    os.chdir(path)
     gui = gui()
     gui.start()

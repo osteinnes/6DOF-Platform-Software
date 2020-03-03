@@ -11,7 +11,9 @@ class webcam(object):
         self.set_cam()
 
     # Set camera to the objects camera variable
-    def set_cam(self, source=2):
+    def set_cam(self, source=0):
+        if self.cam:
+            self.cam.release()            
         self.cam = cv2.VideoCapture(source)
 
     # Release camera and 
@@ -54,6 +56,24 @@ class webcam(object):
     def snapshot(self, name = "Snapshot"):
         img = self.get_img(rgb=False)
         cv2.imwrite(filename=name + ".jpg", img=img)
+
+    def get_cams(self):
+        if self.cam:
+            self.cam.release()   
+        i = 0
+        result = []
+        while True:
+            cap = cv2.VideoCapture(i)
+            if False == cap.read()[0]:
+                cap.release()
+                break
+            else:
+                cap.release()
+                result.append(i)
+            i += 1
+        return result
+
+
         
 
 
