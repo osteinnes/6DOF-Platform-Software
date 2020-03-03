@@ -15,6 +15,7 @@ class gui(object):
     frame_right = None
     frame_right_top = None
     frame_right_center = None
+    frame_right_center1 = None
     frame_right_bot = None
 
     # Variables for the buttons
@@ -28,6 +29,9 @@ class gui(object):
     btn_normal = None
     btn_masked = None
     btn_snapshot = None
+
+    btn_draw = None
+    btn_draw_reset = None
 
     # Camera
     cam = None
@@ -62,13 +66,21 @@ class gui(object):
     def create_dividers(self):
         self.frame_left = Frame(self.root, pady=5, padx=5,
                                 highlightbackground="black", highlightthickness=1)
+
         self.frame_right = Frame(self.root)
+
         self.frame_right_top = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
         self.frame_right_top.columnconfigure(0, weight=1)
+
         self.frame_right_center = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
         self.frame_right_center.columnconfigure(0, weight=1)
+
+        self.frame_right_center1 = Frame(
+            self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_right_center1.columnconfigure(0, weight=1)
+
         self.frame_right_bot = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
         self.frame_right_bot.columnconfigure(0, weight=1)
@@ -79,10 +91,16 @@ class gui(object):
         self.frame_left.pack(side=LEFT, pady=5, padx=5)
         self.frame_right_top.pack(side=TOP, pady=5, padx=5, fill=X)
         self.frame_right_center.pack(pady=5, padx=5, fill=X)
+        self.frame_right_center1.pack(pady=5, padx=5, fill=X)
         self.frame_right_bot.pack(side=BOTTOM, pady=5, padx=5, fill=X)
 
     # Create buttons
     def create_btns(self):
+        self.set_cam("initial cam: 0")      # This string will never appear in gui, must end with " 0"(space + zero)
+        self.select_cam = OptionMenu(
+            self.frame_right_top, self.variable, *self.cams, command=self.set_cam)
+        self.select_cam.config(indicatoron=0)
+
         self.btn_center = Button(self.frame_right_bot,
                                  text="Center", command=self.set_mode_center)
         self.btn_circle = Button(self.frame_right_bot,
@@ -97,13 +115,15 @@ class gui(object):
         self.btn_snapshot = Button(
             self.frame_right_center, text="Snapshot", command=self.cam.snapshot)
 
-        self.set_cam("initial cam: 0")      # This string will never appear in gui, must end with " 0"(space + zero)
-        self.select_cam = OptionMenu(
-            self.frame_right_top, self.variable, *self.cams, command=self.set_cam)
-        self.select_cam.config(indicatoron=0)
+        self.btn_draw = Button(
+            self.frame_right_center1, text="Draw")
+        self.btn_draw_reset = Button(
+            self.frame_right_center1, text="Reset")
 
     # Pack buttons
     def pack_btns(self):
+        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky=(N,S,E,W))
+
         self.btn_center.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_circle.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_fig8.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
@@ -112,8 +132,10 @@ class gui(object):
         self.btn_masked.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_normal.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
 
-        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky=(N,S,E,W))
+        self.btn_draw.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
+        self.btn_draw_reset.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
 
+    # Updates camera list and set new camera
     def set_cam(self, n):        
         self.cams = self.cam.get_cams()
         self.cams = ["Camera " + str(cam) for cam in self.cams]
