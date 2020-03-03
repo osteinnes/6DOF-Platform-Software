@@ -2,7 +2,6 @@ from tkinter import *
 from PIL import Image, ImageTk
 import imutils
 import cv2
-import json
 
 from webcam import webcam, ball_tracking
 
@@ -98,7 +97,7 @@ class gui(object):
         self.btn_snapshot = Button(
             self.frame_right_center, text="Snapshot", command=self.cam.snapshot)
 
-        self.set_cam("Cam 0")
+        self.set_cam("initial cam: 0")      # This string will never appear in gui, must end with " 0"(space + zero)
         self.select_cam = OptionMenu(
             self.frame_right_top, self.variable, *self.cams, command=self.set_cam)
         self.select_cam.config(indicatoron=0)
@@ -117,11 +116,11 @@ class gui(object):
 
     def set_cam(self, n):        
         self.cams = self.cam.get_cams()
-        self.cams = ["Cam " + str(cam) for cam in self.cams]
+        self.cams = ["Camera " + str(cam) for cam in self.cams]
         if not self.variable:
             self.variable = StringVar(self.root)
         self.variable.set(self.cams[0])
-        cam_index = int(n.split()[1])
+        cam_index = int(n.split()[-1])
         self.cam.set_cam(cam_index)
 
     # Restrict minimum size

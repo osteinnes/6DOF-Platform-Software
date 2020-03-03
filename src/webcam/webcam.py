@@ -13,8 +13,9 @@ class webcam(object):
     # Set camera to the objects camera variable
     def set_cam(self, source=0):
         if self.cam:
-            self.cam.release()            
-        self.cam = cv2.VideoCapture(source)
+            self.cam.release() 
+            cv2.destroyAllWindows()           
+        self.cam = cv2.VideoCapture(source, cv2.CAP_DSHOW)
 
     # Release camera and 
     def shut_down(self):
@@ -59,16 +60,19 @@ class webcam(object):
 
     def get_cams(self):
         if self.cam:
-            self.cam.release()   
+            self.cam.release()
+            cv2.destroyAllWindows()
         i = 0
         result = []
         while True:
-            cap = cv2.VideoCapture(i)
+            cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
             if False == cap.read()[0]:
                 cap.release()
+                cv2.destroyAllWindows()
                 break
             else:
                 cap.release()
+                cv2.destroyAllWindows()
                 result.append(i)
             i += 1
         return result
