@@ -150,7 +150,7 @@ class gui(object):
         img = ImageTk.PhotoImage(image=Image.fromarray(img))
         self.label.configure(image=img)
         self.label.image = img
-        self.root.after(50, self.update)
+        self.root.after(1, self.update)
 
     # Switches the image mode between masked and normal
     def set_img_mode_normal(self):
