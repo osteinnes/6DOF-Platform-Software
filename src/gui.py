@@ -38,7 +38,7 @@ class gui(object):
     cams = None
 
     # Image holder
-    label = None
+    canvas = None
 
     # Holds current get image method
     get_img = None
@@ -88,7 +88,7 @@ class gui(object):
     # Pack dividers
     def pack_dividers(self):
         self.frame_right.pack(side=RIGHT, pady=5, padx=5)
-        self.frame_left.pack(side=LEFT, pady=5, padx=5)
+        self.frame_left.pack(side=LEFT, pady=5, padx=5, fill=BOTH)
         self.frame_right_top.pack(side=TOP, pady=5, padx=5, fill=X)
         self.frame_right_center.pack(pady=5, padx=5, fill=X)
         self.frame_right_center1.pack(pady=5, padx=5, fill=X)
@@ -136,13 +136,13 @@ class gui(object):
         self.btn_draw_reset.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
 
     # Updates camera list and set new camera
-    def set_cam(self, n):        
+    def set_cam(self, n=0):        
         self.cams = self.cam.get_cams()
         self.cams = ["Camera " + str(cam) for cam in self.cams]
         if not self.variable:
             self.variable = StringVar(self.root)
-        self.variable.set(self.cams[0])
         cam_index = int(n.split()[-1])
+        self.variable.set(self.cams[cam_index])
         self.cam.set_cam(cam_index)
 
     # Restrict minimum size
@@ -155,22 +155,19 @@ class gui(object):
     def set_image(self):
         img = self.cam.get_masked_img()
         img = ImageTk.PhotoImage(image=Image.fromarray(img))
-        self.label = Label(self.frame_left, image=img)
-        self.label.image = img
-        self.label.pack(fill="both", expand="yes")
+        self.root.img = img
+        self.canvas = Canvas(self.frame_left, width=img.width(), height=img.height())
+        self.canvas.create_image(2, 2, anchor=CENTER, image=img)
+        self.canvas.pack(fill=BOTH, expand=1)
 
     # Callback function to get and update image
     def update(self):
         frame = self.get_img()
-        #img = frame.copy()
-
-        img = None
 
         img = ball_tracking.getContourCircle(frame)
 
-        img = ImageTk.PhotoImage(image=Image.fromarray(img))
-        self.label.configure(image=img)
-        self.label.image = img
+        self.root.img = img = ImageTk.PhotoImage(image=Image.fromarray(img))
+        self.canvas.create_image(2, 2, anchor=NW, image=img)
         self.root.after(1, self.update)
 
     # Switches the image mode between masked and normal
