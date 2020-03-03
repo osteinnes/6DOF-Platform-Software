@@ -36,31 +36,41 @@ def getHoughCircle(image):
     return img
 
 
-def getContourCircle(img):
+def getContourCircle(img, mask_type):
 
-    mask = generateMask(img)
+    mask = generateMask(img, mask_type)
 
     # Find contours
     contours, hierarchy = cv2.findContours( mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
-    if len(contours) > 1:
+    if len(contours) > 0:
         sorted_contours = doSortContours(contours)
         
         # Retrieve relevant contours
         biggest_contour = sorted_contours[0][1]
-        smallest_contour = sorted_contours[2][1]
 
-        # Draw contours on image
-        cv2.drawContours(img, smallest_contour, -1, (0, 255, 0), 3)
-        cv2.drawContours(img, biggest_contour, -1, (255, 0, 0), 3)
+        if mask_type == "white":
+            # Draw contours on image
+            cv2.drawContours(img, biggest_contour, -1, (255, 0, 0), 3)
 
-        # Find and draw centre of contours
-        img = drawContourCenter(biggest_contour, img, (255, 0, 0))
-        img = drawContourCenter(smallest_contour, img, (0, 255, 0))
+            # Find and draw centre of contours
+            img = drawContourCenter(biggest_contour, img, (255, 0, 0))
 
-        # Retrieve coordinates of center and print them
-        x,y = getContourCenter(smallest_contour)
-        print("Center of ball>> x:", x, " y: ", y)
+            # Retrieve coordinates of center and print them
+            x,y = getContourCenter(biggest_contour)
+            print("Center of ball>> x:", x, " y: ", y)
+        elif mask_type == "red":
+            # Draw contours on image
+            cv2.drawContours(img, biggest_contour, -1, (0, 255, 0), 3)
+
+            # Find and draw centre of contours
+            img = drawContourCenter(biggest_contour, img, (0, 255, 0))
+        elif mask_type == "blue":
+            # Draw contours on image
+            cv2.drawContours(img, biggest_contour, -1, (0, 0, 255), 3)
+
+            # Find and draw centre of contours
+            img = drawContourCenter(biggest_contour, img, (0, 0, 255))
 
     # Return image with contours and centers drawn (if any)
     return img
@@ -97,17 +107,18 @@ def getContourCenter(contour):
     # Return coordinates
     return cX, cY
 
-def generateMask(img):
+def generateMask(img, mask_type):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # Red color spectrum
-    lower = cv2.inRange(hsv, (0, 75, 50), (15, 255, 255))
-    upper = cv2.inRange(hsv, (165, 75, 50), (180, 255, 255))
-    red = lower + upper
-
-    # Blue color
-    blue = cv2.inRange(hsv, (100, 150, 50), (135, 255, 255))
-    mask = red + blue
-
+    if mask_type == "red":        
+        lower = cv2.inRange(hsv, (0, 50, 50), (10, 255, 255))
+        upper = cv2.inRange(hsv, (170, 50, 50), (180, 255, 255))
+        mask = lower + upper
+    elif mask_type == "blue":
+        # Blue color
+        mask = cv2.inRange(hsv, (100, 150, 50), (135, 255, 255))
+    elif mask_type == "white":
+        mask = cv2.inRange(hsv, (0,0,0), (0,0,255))
     return mask
 
 
@@ -127,7 +138,7 @@ if __name__ == "__main__":
     ap.add_argument("-i", "--image", required=True, help="Path to the image")
     args = vars(ap.parse_args())
 
-    image = getContourCircle(cv2.imread(args["image"], cv2.IMREAD_COLOR))
+    image = getContourCircle(cv2.imread(args["image"], cv2.IMREAD_COLOR), "blue")
 
     cv2.imshow('',image)
     cv2.waitKey(0)
