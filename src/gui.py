@@ -32,6 +32,7 @@ class gui(object):
 
     # Camera
     cam = None
+    cams = None
 
     # Image holder
     label = None
@@ -65,11 +66,13 @@ class gui(object):
         self.frame_right = Frame(self.root)
         self.frame_right_top = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_right_top.columnconfigure(0, weight=1)
         self.frame_right_center = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
+        self.frame_right_center.columnconfigure(0, weight=1)
         self.frame_right_bot = Frame(
             self.frame_right, pady=5, padx=5, highlightbackground="black", highlightthickness=1)
-
+        self.frame_right_bot.columnconfigure(0, weight=1)
 
     # Pack dividers
     def pack_dividers(self):
@@ -94,13 +97,11 @@ class gui(object):
             self.frame_right_center, text="Masked", command=self.set_img_mode_masked)
         self.btn_snapshot = Button(
             self.frame_right_center, text="Snapshot", command=self.cam.snapshot)
-        
-        cams = self.cam.get_cams()
-        self.variable = StringVar(self.root)
-        self.variable.set(str(cams[0]))
-        self.set_cam(cams[0])
+
+        self.set_cam("Cam 0")
         self.select_cam = OptionMenu(
-            self.frame_right_top, self.variable, *[str(cam) for cam in cams], command=self.set_cam)
+            self.frame_right_top, self.variable, *self.cams, command=self.set_cam)
+        self.select_cam.config(indicatoron=0)
 
     # Pack buttons
     def pack_btns(self):
@@ -112,10 +113,15 @@ class gui(object):
         self.btn_masked.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_normal.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
 
-        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
+        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky=(N,S,E,W))
 
-    def set_cam(self, n):
-        cam_index = int(n)
+    def set_cam(self, n):        
+        self.cams = self.cam.get_cams()
+        self.cams = ["Cam " + str(cam) for cam in self.cams]
+        if not self.variable:
+            self.variable = StringVar(self.root)
+        self.variable.set(self.cams[0])
+        cam_index = int(n.split()[1])
         self.cam.set_cam(cam_index)
 
     # Restrict minimum size
