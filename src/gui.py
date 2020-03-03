@@ -39,14 +39,22 @@ class gui(object):
 
     # Image holder
     canvas = None
+    img = None
 
     # Holds current get image method
     get_img = None
+
+    # Holds update method
+    update = None
+
+    # Array with coordinates entered by user
+    coord = []
 
     # Setup gui
     def __init__(self):
         self.cam = webcam.webcam()
         self.get_img = self.cam.get_img
+        self.update = self.update_img
 
         self.root = Tk()
         self.root.title("6DOF-Platform 3000")
@@ -116,13 +124,13 @@ class gui(object):
             self.frame_right_center, text="Snapshot", command=self.cam.snapshot)
 
         self.btn_draw = Button(
-            self.frame_right_center1, text="Draw")
+            self.frame_right_center1, text="Draw", command=self.set_draw_mode)
         self.btn_draw_reset = Button(
-            self.frame_right_center1, text="Reset")
+            self.frame_right_center1, text="Reset", command=self.set_draw_reset)
 
     # Pack buttons
     def pack_btns(self):
-        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky=(N,S,E,W))
+        self.select_cam.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
 
         self.btn_center.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_circle.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
@@ -153,29 +161,50 @@ class gui(object):
 
     # Set placeholder image
     def set_image(self):
-        img = self.cam.get_masked_img()
+        img = self.cam.get_img()
         img = ImageTk.PhotoImage(image=Image.fromarray(img))
         self.root.img = img
         self.canvas = Canvas(self.frame_left, width=img.width(), height=img.height())
-        self.canvas.create_image(2, 2, anchor=CENTER, image=img)
+        self.img = self.canvas.create_image(2, 2, anchor=NW, image=img)
         self.canvas.pack(fill=BOTH, expand=1)
 
     # Callback function to get and update image
-    def update(self):
+    def update_img(self):
         frame = self.get_img()
 
         img = ball_tracking.getContourCircle(frame)
 
         self.root.img = img = ImageTk.PhotoImage(image=Image.fromarray(img))
-        self.canvas.create_image(2, 2, anchor=NW, image=img)
+        self.canvas.create_image(0, 0, anchor=NW, image=img)
+        self.root.after(1, self.update)
+
+    # Callback function for drawing
+    def update_drawing(self):
         self.root.after(1, self.update)
 
     # Switches the image mode between masked and normal
     def set_img_mode_normal(self):
+        self.root.unbind("<B1-Motion>")
+        self.update = self.update_img
         self.get_img = self.cam.get_img
 
     def set_img_mode_masked(self):
+        self.root.unbind("<B1-Motion>")
+        self.update = self.update_img
         self.get_img = self.cam.get_masked_img
+
+    def set_draw_mode(self):
+        self.coord=[]
+        self.canvas.bind("<B1-Motion>", self.draw_line)
+        self.update = self.update_drawing
+        img = Image.open('src/draw_bg.jpg')
+        img = ImageTk.PhotoImage(image=img)
+        self.root.img = img
+        self.canvas.create_image(2, 2, anchor=NW, image=img)
+
+    def set_draw_reset(self):
+        self.coord = []
+        self.set_draw_mode()
 
     # Set different modes
     def set_mode_center(self):
@@ -187,6 +216,13 @@ class gui(object):
     def set_mode_figure8(self):
         print("mode: figure 8")
 
+    def draw_line(self, event):
+        x, y = event.x, event.y
+        print(len(self.coord))
+        if self.coord:
+            x0, y0 = self.coord[-1]
+            self.canvas.create_line(x, y, x0, y0)
+        self.coord.append((x, y))
 
 if __name__ == "__main__":
     gui = gui()
