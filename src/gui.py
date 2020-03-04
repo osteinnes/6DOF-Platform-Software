@@ -32,6 +32,7 @@ class gui(object):
 
     btn_draw = None
     btn_draw_reset = None
+    btn_use_drawing = None
 
     # Camera
     cam = None
@@ -127,6 +128,8 @@ class gui(object):
             self.frame_right_center1, text="Draw", command=self.set_draw_mode)
         self.btn_draw_reset = Button(
             self.frame_right_center1, text="Reset", command=self.set_draw_reset)
+        self.btn_use_drawing = Button(
+            self.frame_right_center1, text="Use drawing", command=self.use_drawing)
 
     # Pack buttons
     def pack_btns(self):
@@ -142,6 +145,7 @@ class gui(object):
 
         self.btn_draw.grid(row=0, column=0, pady=5, padx=5, sticky='nsew')
         self.btn_draw_reset.grid(row=1, column=0, pady=5, padx=5, sticky='nsew')
+        self.btn_use_drawing.grid(row=2, column=0, pady=5, padx=5, sticky='nsew')
 
     # Updates camera list and set new camera
     def set_cam(self, n=0):        
@@ -205,6 +209,9 @@ class gui(object):
     def set_draw_reset(self):
         self.coord = []
         self.set_draw_mode()
+
+    def use_drawing(self):
+        print(self.coord)
 
     # Set different modes
     def set_mode_center(self):
