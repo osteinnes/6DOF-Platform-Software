@@ -228,7 +228,7 @@ class gui(object):
         print(len(self.coord))
         if self.coord:
             x0, y0 = self.coord[-1]
-            self.canvas.create_line(x, y, x0, y0, fill="red", width=3)
+            self.canvas.create_line(x, y, x0, y0)
         self.coord.append((x, y))
 
 if __name__ == "__main__":
