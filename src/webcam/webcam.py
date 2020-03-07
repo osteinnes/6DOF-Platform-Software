@@ -58,27 +58,21 @@ class webcam(object):
         img = self.get_img(rgb=False)
         cv2.imwrite(filename=name + ".jpg", img=img)
 
-    def get_cams(self):
+    def get_cams(self, max_index=100):
         if self.cam:
             self.cam.release()
             cv2.destroyAllWindows()
         i = 0
         result = []
-        while True:
+        while i<max_index:
             cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-            if False == cap.read()[0]:
-                cap.release()
-                cv2.destroyAllWindows()
-                break
-            else:
-                cap.release()
-                cv2.destroyAllWindows()
+            if False != cap.read()[0]:
                 result.append(i)
+                
+            cap.release()
+            cv2.destroyAllWindows()
             i += 1
         return result
-
-
-        
 
 
 if __name__ == "__main__":
