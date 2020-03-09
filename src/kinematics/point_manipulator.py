@@ -31,7 +31,7 @@ def rotate(pos, roll=0, pitch=0, yaw=0, rad=False):
     ])
 
     result = yaw_mat.dot(pitch_mat).dot(roll_mat).dot(pos).tolist()
-    result = [round(e, 2) for e in result]
+    result = [round(e, 6) for e in result]
 
                                 # Return result as tuple
     return tuple(result)
