@@ -6,6 +6,8 @@ import json as js
 
 class Servos:
   servos = []
+  roll, pitch, yaw = 90, 90, 90 # Absolute rotation of platform
+  x, y, z = 0, 0, 0             # Absolute translation of platform
 
   # Set platform connection points
   def __init__(self):
@@ -13,6 +15,7 @@ class Servos:
 
   # Rotates the points and returns servo angles
   def get_servo_angles(self, roll=0, pitch=0, yaw=0, x=0, y=0, z=0):
+    #self.roll, self.pitch, self.yaw += roll, pitch, yaw
     result = []
     old_points = []
     for servo in self.servos:
@@ -29,6 +32,12 @@ class Servos:
         servo.set_platform_point(old_points[i])
 
     return result
+
+  def get_roll(self):
+    return self.roll
+
+  def get_pitch(self):
+    return self.pitch
 
   # Reads json configuration file and creates servo objects
   def set_servos(self, path='src/kinematics/servos.json'):
