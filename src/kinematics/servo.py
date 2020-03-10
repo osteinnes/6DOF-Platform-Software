@@ -35,8 +35,8 @@ class Servo:
         L = 2*(self.A[0] - self.p[0])*self.a*cos(self.angle) + 2*(self.A[1] - self.p[1])*self.a*sin(self.angle)
 
         try:
-            angle = acos(M/sqrt(K**2 + L**2)) + atan(L/K)
-            return round(180 - angle*180/pi)
+            angle = pi - (acos(M/sqrt(K**2 + L**2)) + atan(L/K))
+            return round(angle*180/pi + 50)
         except ValueError:
             print("No cos angle exists exists")
             return None

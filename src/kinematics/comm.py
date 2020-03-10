@@ -31,19 +31,24 @@ while True:
 
     
     roll, pitch, yaw = 0, 0, 0
+    x, y, z = 0, 0, 0
+    angles = []
     try:
-        print("Enter three angles: roll, pitch, and yaw")
+        print("Enter: roll, pitch, and yaw")
         inp = input().split()
 
         if 2<len(inp):
-            roll, pitch, yaw = [int(x) for x in inp]
+            roll, pitch, yaw, x, y, z = [int(x) for x in inp]
+            angles = servos.get_servo_angles(roll, pitch, yaw, x, y, z)
         elif "e" == inp[0]:
             break
+        elif "test" == inp[0]:
+            pass
+
     except:
         print("WRONG!!")
         continue
 
-    angles = servos.get_servo_angles(roll = roll, pitch = pitch, yaw = yaw)
 
     for i, p in enumerate(values):
         if not None in angles and "pos" in p:
